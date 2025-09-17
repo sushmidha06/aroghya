@@ -1,0 +1,530 @@
+{
+  "@@locale": "en",
+  
+  "appTitle": "Aroghya AI",
+  "home": "Home",
+  "profile": "Profile",
+  "settings": "Settings",
+  "vault": "Medical Vault",
+  "insurance": "Insurance",
+  "symptomChecker": "Symptom Checker",
+  "aiRecommendations": "AI Recommendations",
+  "appointments": "Appointments",
+  "medications": "Medications",
+  "emergencyContacts": "Emergency Contacts",
+  
+  "welcomeBack": "Welcome back",
+  "accountInformation": "Account Information",
+  "accountStatus": "Account Status",
+  "active": "Active",
+  "security": "Security",
+  "passwordProtected": "Password Protected",
+  "lastLogin": "Last Login",
+  "today": "Today",
+  "dataStorage": "Data Storage",
+  "localDevice": "Local Device",
+  
+  "language": "Language",
+  "selectLanguage": "Select Language",
+  "english": "English",
+  "hindi": "हिन्दी (Hindi)",
+  "tamil": "தமிழ் (Tamil)",
+  "telugu": "తెలుగు (Telugu)",
+  "bengali": "বাংলা (Bengali)",
+  
+  "describeSymptoms": "Describe Your Symptoms",
+  "quickSelectSymptoms": "Quick Select Symptoms:",
+  "analyzeSymptomsWithAI": "Analyze Symptoms with AI",
+  "analyzingWithGemma": "Analyzing with Gemma 3...",
+  "enterVitalsOptional": "Enter Your Vitals (Optional)",
+  "temperature": "Temperature (°F)",
+  "bloodPressure": "Blood Pressure",
+  "heartRate": "Heart Rate (bpm)",
+  "emergencyActions": "Emergency Actions",
+  "emergency": "Emergency",
+  "callDoctor": "Call Doctor",
+  
+  "searchDocuments": "Search documents...",
+  "uploadDocument": "Upload Document",
+  "documentUploaded": "Document uploaded successfully",
+  "errorProcessingDocument": "Error processing document: {error}",
+  "@errorProcessingDocument": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "aiHealthRecommendations": "AI Health Recommendations",
+  "errorLoadingRecommendations": "Error loading recommendations",
+  "retry": "Retry",
+  "dailyHealthTips": "Daily Health Tips",
+  "stayHydrated": "Stay hydrated",
+  "takeShortBreaks": "Take short breaks",
+  "getEnoughSleep": "Get enough sleep",
+  "exerciseRegularly": "Exercise regularly",
+  
+  "speakNow": "Speak now...",
+  "listeningForSpeech": "Listening for speech in {language}",
+  "@listeningForSpeech": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "speechRecognitionError": "Speech recognition error: {error}",
+  "@speechRecognitionError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "translating": "Translating...",
+  "translationComplete": "Translation complete",
+  
+  "addMedication": "Add Medication",
+  "medicationName": "Medication Name",
+  "dosage": "Dosage",
+  "frequency": "Frequency",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "notes": "Notes",
+  "medicationAdded": "Medication added successfully",
+  "medicationUpdated": "Medication updated successfully",
+  "medicationDeleted": "Medication deleted successfully",
+  "deleteMedicationConfirm": "Are you sure you want to delete this medication?",
+  "medicationAlerts": "Medication Alerts",
+  "timeToTakeMedication": "Time to take your medication",
+  "markAsTaken": "Mark as Taken",
+  "snooze": "Snooze",
+  "skip": "Skip",
+  
+  "scheduleAppointment": "Schedule Appointment",
+  "doctorName": "Doctor Name",
+  "appointmentDate": "Appointment Date",
+  "appointmentTime": "Appointment Time",
+  "appointmentType": "Appointment Type",
+  "appointmentNotes": "Appointment Notes",
+  "appointmentScheduled": "Appointment scheduled successfully",
+  "appointmentUpdated": "Appointment updated successfully",
+  "appointmentCancelled": "Appointment cancelled",
+  "cancelAppointmentConfirm": "Are you sure you want to cancel this appointment?",
+  "upcomingAppointments": "Upcoming Appointments",
+  "pastAppointments": "Past Appointments",
+  "noAppointments": "No appointments scheduled",
+  
+  "changePassword": "Change Password",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm New Password",
+  "passwordChanged": "Password changed successfully",
+  "passwordMismatch": "Passwords do not match",
+  "invalidCurrentPassword": "Current password is incorrect",
+  "passwordTooShort": "Password must be at least 8 characters",
+  "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+  
+  "emergencyContactName": "Contact Name",
+  "emergencyContactPhone": "Phone Number",
+  "emergencyContactRelation": "Relationship",
+  "addEmergencyContact": "Add Emergency Contact",
+  "editEmergencyContact": "Edit Emergency Contact",
+  "deleteEmergencyContact": "Delete Emergency Contact",
+  "emergencyContactAdded": "Emergency contact added successfully",
+  "emergencyContactUpdated": "Emergency contact updated successfully",
+  "emergencyContactDeleted": "Emergency contact deleted successfully",
+  "deleteContactConfirm": "Are you sure you want to delete this contact?",
+  "callEmergencyContact": "Call Emergency Contact",
+  "noEmergencyContacts": "No emergency contacts added",
+  
+  "healthClaimTracker": "Health Claim Tracker",
+  "fileNewClaim": "File New Claim",
+  "claimStatus": "Claim Status",
+  "policyNumber": "Policy Number",
+  "hospitalName": "Hospital Name",
+  "patientName": "Patient Name",
+  "admissionDate": "Admission Date",
+  "diagnosis": "Diagnosis",
+  "claimAmount": "Claim Amount",
+  "documentsRequired": "Documents Required",
+  "uploadDocuments": "Upload Documents",
+  "claimSubmitted": "Claim submitted successfully",
+  "claimUpdated": "Claim updated successfully",
+  "claimApproved": "Claim Approved",
+  "claimRejected": "Claim Rejected",
+  "claimPending": "Claim Pending",
+  "documentsNeeded": "Documents Needed",
+  "noClaims": "No claims found",
+  
+  "languageChanged": "Language changed to {language}",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "testSpeechRecognition": "Test Speech Recognition",
+  "speakInSelectedLanguage": "Speak in the selected language to test",
+  "speechTestSuccessful": "Speech recognition test successful",
+  "speechTestFailed": "Speech recognition test failed",
+  
+  "scanMedication": "Scan Medication",
+  "scanPrescription": "Scan Prescription",
+  "medicationScanned": "Medication scanned successfully",
+  "prescriptionScanned": "Prescription scanned successfully",
+  "scanningError": "Error scanning: {error}",
+  "@scanningError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "ocrProcessing": "Processing image...",
+  "ocrComplete": "Text extraction complete",
+  
+  "scheduleMeeting": "Schedule Meeting",
+  "meetingTitle": "Meeting Title",
+  "meetingDate": "Meeting Date",
+  "meetingTime": "Meeting Time",
+  "meetingLocation": "Meeting Location",
+  "meetingNotes": "Meeting Notes",
+  "meetingScheduled": "Meeting scheduled successfully",
+  "meetingUpdated": "Meeting updated successfully",
+  "meetingCancelled": "Meeting cancelled",
+  "upcomingMeetings": "Upcoming Meetings",
+  "pastMeetings": "Past Meetings",
+  "noMeetings": "No meetings scheduled",
+  
+  "personalInformation": "Personal Information",
+  "fullName": "Full Name",
+  "email": "Email",
+  "phoneNumber": "Phone Number",
+  "dateOfBirth": "Date of Birth",
+  "gender": "Gender",
+  "bloodGroup": "Blood Group",
+  "allergies": "Allergies",
+  "medicalHistory": "Medical History",
+  "profileUpdated": "Profile updated successfully",
+  "profileUpdateError": "Error updating profile",
+  
+  "healthSummary": "Health Summary",
+  "lastCheckup": "Last Checkup",
+  "aiHealthScore": "AI Health Score",
+  "upcomingAppointmentsCount": "Upcoming Appointments",
+  "alerts": "Alerts",
+  "noDataAvailable": "No data available",
+  "completeSymptomCheck": "Complete a symptom check",
+  "noCheckupsRecorded": "No checkups recorded",
+  "activeMedications": "{count} active medications",
+  "@activeMedications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "fever": "Fever",
+  "cough": "Cough",
+  "headache": "Headache",
+  "nausea": "Nausea",
+  "fatigue": "Fatigue",
+  "bodyAche": "Body Ache",
+  "soreThroat": "Sore Throat",
+  "runnyNose": "Runny Nose",
+  "dizziness": "Dizziness",
+  "chestPain": "Chest Pain",
+  "shortnessOfBreath": "Shortness of Breath",
+  "stomachPain": "Stomach Pain",
+  
+  "mild": "Mild",
+  "moderate": "Moderate",
+  "severe": "Severe",
+  "critical": "Critical",
+  
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "preferNotToSay": "Prefer not to say",
+  
+  "daily": "Daily",
+  "twiceDaily": "Twice Daily",
+  "threeTimesDaily": "Three Times Daily",
+  "weekly": "Weekly",
+  "asNeeded": "As Needed",
+  
+  "consultation": "Consultation",
+  "followUp": "Follow-up",
+  "checkup": "Check-up",
+  "emergency": "Emergency",
+  "vaccination": "Vaccination",
+  "labTest": "Lab Test",
+  
+  "required": "Required",
+  "optional": "Optional",
+  "pleaseEnterValue": "Please enter a value",
+  "pleaseSelectDate": "Please select a date",
+  "pleaseSelectTime": "Please select a time",
+  "invalidEmail": "Please enter a valid email",
+  "invalidPhone": "Please enter a valid phone number",
+  "fieldRequired": "This field is required",
+  
+  "camera": "Camera",
+  "gallery": "Gallery",
+  "chooseUploadMethod": "Choose upload method",
+  "imageSelected": "Image selected",
+  "imageUploadError": "Error uploading image",
+  "permissionDenied": "Permission denied",
+  "cameraPermissionRequired": "Camera permission is required",
+  "storagePermissionRequired": "Storage permission is required",
+  
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "close": "Close",
+  "ok": "OK",
+  "yes": "Yes",
+  "no": "No",
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success",
+  "warning": "Warning",
+  "info": "Information",
+  "confirm": "Confirm",
+  "back": "Back",
+  "next": "Next",
+  "done": "Done",
+  "submit": "Submit",
+  "update": "Update",
+  "add": "Add",
+  "remove": "Remove",
+  "search": "Search",
+  "filter": "Filter",
+  "sort": "Sort",
+  "refresh": "Refresh",
+  "share": "Share",
+  "export": "Export",
+  "import": "Import",
+  "print": "Print",
+  "copy": "Copy",
+  "paste": "Paste",
+  "cut": "Cut",
+  "undo": "Undo",
+  "redo": "Redo",
+  "selectAll": "Select All",
+  "clear": "Clear",
+  "reset": "Reset",
+  
+  "logout": "Logout",
+  "logoutConfirmation": "Are you sure you want to logout?",
+  "loggedOutSuccessfully": "Logged out successfully",
+  "logoutError": "Logout error: {error}",
+  "@logoutError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "networkError": "Network error. Please check your connection.",
+  "serverError": "Server error. Please try again later.",
+  "unknownError": "An unknown error occurred",
+  "timeoutError": "Request timeout. Please try again.",
+  "noInternetConnection": "No internet connection",
+  "connectionRestored": "Connection restored",
+  
+  "morning": "Morning",
+  "afternoon": "Afternoon",
+  "evening": "Evening",
+  "night": "Night",
+  "beforeMeals": "Before Meals",
+  "afterMeals": "After Meals",
+  "withMeals": "With Meals",
+  "onEmptyStomach": "On Empty Stomach",
+  
+  "tablet": "Tablet",
+  "capsule": "Capsule",
+  "syrup": "Syrup",
+  "injection": "Injection",
+  "drops": "Drops",
+  "cream": "Cream",
+  "ointment": "Ointment",
+  "inhaler": "Inhaler",
+  
+  "mg": "mg",
+  "ml": "ml",
+  "units": "units",
+  "drops": "drops",
+  "puffs": "puffs",
+  
+  "viewAll": "View All",
+  "viewLess": "View Less",
+  "showMore": "Show More",
+  "showLess": "Show Less",
+  "seeAll": "See All",
+  "collapse": "Collapse",
+  "expand": "Expand",
+  
+  "changePassword": "Change Password",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm New Password",
+  "passwordChanged": "Password changed successfully",
+  "passwordMismatch": "Passwords do not match",
+  "invalidCurrentPassword": "Current password is incorrect",
+  "passwordTooShort": "Password must be at least 8 characters",
+  "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+  
+  "languageChanged": "Language changed to {language}",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "testSpeechRecognition": "Test Speech Recognition",
+  "speakInSelectedLanguage": "Speak in the selected language to test",
+  "speechTestSuccessful": "Speech recognition test successful",
+  "speechTestFailed": "Speech recognition test failed",
+  
+  "scanMedication": "Scan Medication",
+  "scanPrescription": "Scan Prescription",
+  "medicationScanned": "Medication scanned successfully",
+  "prescriptionScanned": "Prescription scanned successfully",
+  "scanningError": "Error scanning: {error}",
+  "@scanningError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "ocrProcessing": "Processing image...",
+  "ocrComplete": "Text extraction complete",
+  
+  "scheduleMeeting": "Schedule Meeting",
+  "meetingTitle": "Meeting Title",
+  "meetingDate": "Meeting Date",
+  "meetingTime": "Meeting Time",
+  "meetingLocation": "Meeting Location",
+  "meetingNotes": "Meeting Notes",
+  "meetingScheduled": "Meeting scheduled successfully",
+  "meetingUpdated": "Meeting updated successfully",
+  "meetingCancelled": "Meeting cancelled",
+  "upcomingMeetings": "Upcoming Meetings",
+  "pastMeetings": "Past Meetings",
+  "noMeetings": "No meetings scheduled",
+  
+  "healthSummary": "Health Summary",
+  "lastCheckup": "Last Checkup",
+  "aiHealthScore": "AI Health Score",
+  "upcomingAppointmentsCount": "Upcoming Appointments",
+  "alerts": "Alerts",
+  "noDataAvailable": "No data available",
+  "completeSymptomCheck": "Complete a symptom check",
+  "noCheckupsRecorded": "No checkups recorded",
+  "activeMedications": "{count} active medications",
+  "@activeMedications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "runnyNose": "Runny Nose",
+  "dizziness": "Dizziness",
+  "chestPain": "Chest Pain",
+  "shortnessOfBreath": "Shortness of Breath",
+  "stomachPain": "Stomach Pain",
+  
+  "consultation": "Consultation",
+  "followUp": "Follow-up",
+  "checkup": "Check-up",
+  "vaccination": "Vaccination",
+  "labTest": "Lab Test",
+  
+  "pleaseEnterValue": "Please enter a value",
+  "pleaseSelectDate": "Please select a date",
+  "pleaseSelectTime": "Please select a time",
+  "invalidEmail": "Please enter a valid email",
+  "invalidPhone": "Please enter a valid phone number",
+  "fieldRequired": "This field is required",
+  
+  "imageSelected": "Image selected",
+  "imageUploadError": "Error uploading image",
+  "permissionDenied": "Permission denied",
+  "cameraPermissionRequired": "Camera permission is required",
+  "storagePermissionRequired": "Storage permission is required",
+  
+  "warning": "Warning",
+  "info": "Information",
+  "confirm": "Confirm",
+  "back": "Back",
+  "next": "Next",
+  "done": "Done",
+  "submit": "Submit",
+  "update": "Update",
+  "add": "Add",
+  "remove": "Remove",
+  "search": "Search",
+  "filter": "Filter",
+  "sort": "Sort",
+  "refresh": "Refresh",
+  "share": "Share",
+  "export": "Export",
+  "import": "Import",
+  "print": "Print",
+  "copy": "Copy",
+  "paste": "Paste",
+  "cut": "Cut",
+  "undo": "Undo",
+  "redo": "Redo",
+  "selectAll": "Select All",
+  "clear": "Clear",
+  "reset": "Reset",
+  
+  "networkError": "Network error. Please check your connection.",
+  "serverError": "Server error. Please try again later.",
+  "unknownError": "An unknown error occurred",
+  "timeoutError": "Request timeout. Please try again.",
+  "noInternetConnection": "No internet connection",
+  "connectionRestored": "Connection restored",
+  
+  "morning": "Morning",
+  "afternoon": "Afternoon",
+  "evening": "Evening",
+  "night": "Night",
+  "beforeMeals": "Before Meals",
+  "afterMeals": "After Meals",
+  "withMeals": "With Meals",
+  "onEmptyStomach": "On Empty Stomach",
+  
+  "tablet": "Tablet",
+  "capsule": "Capsule",
+  "syrup": "Syrup",
+  "injection": "Injection",
+  "drops": "Drops",
+  "cream": "Cream",
+  "ointment": "Ointment",
+  "inhaler": "Inhaler",
+  
+  "mg": "mg",
+  "ml": "ml",
+  "units": "units",
+  "puffs": "puffs",
+  
+  "viewAll": "View All",
+  "viewLess": "View Less",
+  "showMore": "Show More",
+  "showLess": "Show Less",
+  "seeAll": "See All",
+  "collapse": "Collapse"
+}

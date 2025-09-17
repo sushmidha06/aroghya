@@ -45,5 +45,122 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- Camera permission -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to capture health-related images and documents</string>
+	
+	<!-- Photo Library permissions -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to save and retrieve health-related images</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save health-related images to your photo library</string>
+	
+	<!-- Location permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs location access to provide location-based health services</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs location access to provide continuous health monitoring services</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs location access to provide continuous health monitoring services</string>
+	
+	<!-- Microphone permission -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs microphone access for audio-based health monitoring features</string>
+	
+	<!-- Health permissions -->
+	<key>NSHealthShareUsageDescription</key>
+	<string>This app needs access to read your health data for comprehensive health monitoring</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>This app needs permission to update your health data with new measurements and insights</string>
+	
+	<!-- Motion and Fitness permissions -->
+	<key>NSMotionUsageDescription</key>
+	<string>This app needs motion data access to track your physical activities and health metrics</string>
+	<key>NSFallDetectionUsageDescription</key>
+	<string>This app needs fall detection access to monitor your safety and well-being</string>
+	
+	<!-- Bluetooth permissions -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app needs Bluetooth access to connect with health monitoring devices</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This app needs Bluetooth access to communicate with health monitoring peripherals</string>
+	
+	<!-- Face ID / Touch ID permission -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>This app uses Face ID for secure authentication to protect your health data</string>
+	
+	<!-- Contacts permission (if needed) -->
+	<key>NSContactsUsageDescription</key>
+	<string>This app needs access to your contacts to share health information with your emergency contacts</string>
+	
+	<!-- Calendar permission (if needed) -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app needs calendar access to schedule and remind you of health appointments</string>
+	
+	<!-- Reminders permission (if needed) -->
+	<key>NSRemindersUsageDescription</key>
+	<string>This app needs reminders access to help you manage your health routine</string>
+	
+	<!-- Network usage -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	
+	<!-- Background modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-processing</string>
+		<string>background-fetch</string>
+		<string>remote-notification</string>
+		<string>background-app-refresh</string>
+		<string>location</string>
+		<string>bluetooth-central</string>
+		<string>bluetooth-peripheral</string>
+		<string>external-accessory</string>
+		<string>processing</string>
+	</array>
+	
+	<!-- App supports opening documents -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Health Documents</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.image</string>
+				<string>public.movie</string>
+				<string>public.audio</string>
+				<string>public.data</string>
+			</array>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+		</dict>
+	</array>
+	
+	<!-- Required device capabilities -->
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	
+	<!-- Prevent backup of sensitive data -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	
+	<!-- Support for multiple windows on iPad -->
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	
+	<!-- Allow app to run in background -->
+	<key>UIApplicationExitsOnSuspend</key>
+	<false/>
+	
+	<!-- Google Maps API Key -->
+	<key>GMSApiKey</key>
+	<string>AIzaSyBGNNzCNvl5tSIxVc0RHPEWt7A7qT4VL3s</string>
 </dict>
 </plist>

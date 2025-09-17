@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
+
+import '../theme/app_theme.dart'; // Import your AppTheme file
+import '../models/meeting.dart';
+import 'meeting_scheduler_page.dart';
 
 class AppointmentsPage extends StatefulWidget {
   const AppointmentsPage({super.key});
@@ -8,253 +14,291 @@ class AppointmentsPage extends StatefulWidget {
 }
 
 class _AppointmentsPageState extends State<AppointmentsPage> {
-  final Color primaryColor = const Color(0xFF1E2432);
+  // Lists to hold sorted meetings
+  List<Meeting> _upcomingMeetings = [];
+  List<Meeting> _pastMeetings = [];
 
-  // Dummy appointment data
-  final List<Map<String, dynamic>> upcomingAppointments = [
-    {
-      "doctor": "Dr. Meera Sharma",
-      "specialty": "Cardiologist",
-      "clinic": "Apollo Clinic",
-      "date": "18 Sep 2025",
-      "time": "10:30 AM",
-      "critical": true,
-    },
-    {
-      "doctor": "Dr. Rajesh Kumar",
-      "specialty": "Dermatologist",
-      "clinic": "Fortis Health",
-      "date": "22 Sep 2025",
-      "time": "3:00 PM",
-      "critical": false,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Use ValueListenableBuilder on the Hive box for automatic UI updates
+  }
 
-  final List<Map<String, dynamic>> pastAppointments = [
-    {
-      "doctor": "Dr. Anjali Verma",
-      "specialty": "General Physician",
-      "clinic": "City Care Hospital",
-      "date": "05 Sep 2025",
-      "time": "11:00 AM",
-    },
-    {
-      "doctor": "Dr. Sunil Nair",
-      "specialty": "ENT Specialist",
-      "clinic": "MedLife Clinic",
-      "date": "20 Aug 2025",
-      "time": "4:30 PM",
-    },
-  ];
+  // Helper to sort and filter meetings from the Hive box
+  void _sortMeetings(Box<Meeting> box) {
+    final allMeetings = box.values.toList();
+    final now = DateTime.now();
+
+    _upcomingMeetings = allMeetings
+        .where((meeting) => meeting.startTime.isAfter(now))
+        .toList()
+      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    _pastMeetings = allMeetings
+        .where((meeting) => !meeting.startTime.isAfter(now))
+        .toList()
+      ..sort((a, b) => b.startTime.compareTo(a.startTime));
+  }
+
+  // --- Actions ---
+
+  void _editMeeting(Meeting meeting) {
+    // Navigate to the scheduler page to edit the meeting
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MeetingSchedulerPage(meeting: meeting),
+      ),
+    );
+  }
+
+  void _cancelMeeting(Meeting meeting) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusL)),
+          title: const Text('Cancel Appointment', style: AppTheme.headingSmall),
+          content: Text(
+              'Are you sure you want to cancel the appointment with "${meeting.title}"?',
+              style: AppTheme.bodyMedium),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('No', style: TextStyle(color: AppTheme.textSecondary)),
+            ),
+            TextButton(
+              onPressed: () {
+                final meetingsBox = Hive.box<Meeting>('meetings');
+                meetingsBox.delete(meeting.key);
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Cancelled appointment: "${meeting.title}"'),
+                    backgroundColor: AppTheme.infoColor,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              child: const Text('Yes, Cancel', style: TextStyle(color: AppTheme.errorColor)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // --- UI Builder Methods ---
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text("Appointments", style: TextStyle(color: Colors.white)),
-        backgroundColor: primaryColor,
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text("Appointments"),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(screenWidth * 0.04),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- Upcoming Appointments ---
-            Text(
-              "Upcoming Appointments",
-              style: TextStyle(
-                  fontSize: screenWidth * 0.045, 
-                  fontWeight: FontWeight.bold, 
-                  color: primaryColor),
+      body: ValueListenableBuilder<Box<Meeting>>(
+        valueListenable: Hive.box<Meeting>('meetings').listenable(),
+        builder: (context, box, _) {
+          _sortMeetings(box); // Re-sort meetings whenever data changes
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(AppTheme.spacingM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Upcoming Appointments", style: AppTheme.headingMedium),
+                const SizedBox(height: AppTheme.spacingS),
+                _upcomingMeetings.isEmpty
+                    ? _buildEmptyState("No upcoming appointments", Icons.calendar_today_outlined)
+                    : _buildUpcomingList(),
+                const SizedBox(height: AppTheme.spacingL),
+                const Text("Past Appointments", style: AppTheme.headingMedium),
+                const SizedBox(height: AppTheme.spacingS),
+                _pastMeetings.isEmpty
+                    ? _buildEmptyState("No past appointment history", Icons.history)
+                    : _buildPastList(),
+              ],
             ),
-            SizedBox(height: screenHeight * 0.01),
-            ...upcomingAppointments.map((appt) {
-              return Container(
-                margin: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-                padding: EdgeInsets.all(screenWidth * 0.04),
-                decoration: BoxDecoration(
-                  color: appt["critical"]
-                      ? Colors.red[50]
-                      : Colors.lightBlue[50],
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                      color: appt["critical"]
-                          ? Colors.redAccent
-                          : Colors.lightBlue,
-                      width: 1.5),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Doctor & Specialty
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: primaryColor,
-                          radius: screenWidth * 0.06,
-                          child: Icon(Icons.person, color: Colors.white, size: screenWidth * 0.06),
-                        ),
-                        SizedBox(width: screenWidth * 0.03),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(appt["doctor"],
-                                  style: TextStyle(
-                                      fontSize: screenWidth * 0.04, 
-                                      fontWeight: FontWeight.bold)),
-                              Text(appt["specialty"],
-                                  style: TextStyle(
-                                      fontSize: screenWidth * 0.035, 
-                                      color: Colors.black54)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.015),
-                    // Clinic + Date & Time
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Icon(Icons.local_hospital,
-                                  size: screenWidth * 0.045, color: Colors.grey),
-                              SizedBox(width: screenWidth * 0.015),
-                              Expanded(child: Text(appt["clinic"], style: TextStyle(fontSize: screenWidth * 0.035))),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_today,
-                                size: screenWidth * 0.045, color: Colors.grey),
-                            SizedBox(width: screenWidth * 0.015),
-                            Text("${appt["date"]}, ${appt["time"]}", style: TextStyle(fontSize: screenWidth * 0.035)),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.015),
-                    // Action Buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                      "Reschedule option for ${appt["doctor"]}")));
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: screenHeight * 0.012),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            icon: Icon(Icons.schedule, size: screenWidth * 0.04),
-                            label: Text("Reschedule", style: TextStyle(fontSize: screenWidth * 0.035)),
-                          ),
-                        ),
-                        SizedBox(width: screenWidth * 0.03),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                      "Cancelled appointment with ${appt["doctor"]}")));
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: screenHeight * 0.012),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            icon: Icon(Icons.cancel, size: screenWidth * 0.04),
-                            label: Text("Cancel", style: TextStyle(fontSize: screenWidth * 0.035)),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (appt["critical"])
-                      Padding(
-                        padding: EdgeInsets.only(top: screenHeight * 0.01),
-                        child: Row(
-                          children: [
-                            Icon(Icons.warning, color: Colors.red, size: screenWidth * 0.05),
-                            SizedBox(width: screenWidth * 0.015),
-                            Expanded(
-                              child: Text(
-                                "Critical Appointment! Don't miss it.",
-                                style: TextStyle(
-                                    color: Colors.red, 
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: screenWidth * 0.035),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              );
-            }).toList(),
-
-            SizedBox(height: screenHeight * 0.025),
-
-            // --- Past Appointments ---
-            Text(
-              "Past Appointments",
-              style: TextStyle(
-                  fontSize: screenWidth * 0.045, 
-                  fontWeight: FontWeight.bold, 
-                  color: primaryColor),
-            ),
-            SizedBox(height: screenHeight * 0.01),
-            ...pastAppointments.map((appt) {
-              return Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-                margin: EdgeInsets.symmetric(vertical: screenHeight * 0.008),
-                child: ListTile(
-                  contentPadding: EdgeInsets.all(screenWidth * 0.04),
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.grey[300],
-                    radius: screenWidth * 0.06,
-                    child: Icon(Icons.person, color: Colors.black54, size: screenWidth * 0.06),
-                  ),
-                  title: Text(appt["doctor"], style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.w500)),
-                  subtitle: Text("${appt["specialty"]} • ${appt["clinic"]}", style: TextStyle(fontSize: screenWidth * 0.035)),
-                  trailing: Text(
-                    "${appt["date"]}\n${appt["time"]}",
-                    textAlign: TextAlign.right,
-                    style: TextStyle(fontSize: screenWidth * 0.03),
-                  ),
-                ),
-              );
-            }).toList(),
-          ],
-        ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Redirecting to booking page...")));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const MeetingSchedulerPage()),
+          );
         },
-        icon: Icon(Icons.add, size: screenWidth * 0.05),
-        label: Text("Book Appointment", style: TextStyle(fontSize: screenWidth * 0.035)),
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text("Book Now"),
+        backgroundColor: AppTheme.primaryColor,
+        foregroundColor: AppTheme.textOnPrimary,
       ),
     );
+  }
+
+  Widget _buildUpcomingList() {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _upcomingMeetings.length,
+      itemBuilder: (context, index) {
+        final meeting = _upcomingMeetings[index];
+        return _buildUpcomingCard(meeting);
+      },
+    );
+  }
+
+  Widget _buildPastList() {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _pastMeetings.length,
+      itemBuilder: (context, index) {
+        final meeting = _pastMeetings[index];
+        return _buildPastCard(meeting);
+      },
+    );
+  }
+
+  Widget _buildEmptyState(String message, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingL),
+      decoration: AppTheme.cardDecoration
+          .copyWith(color: AppTheme.surfaceColor.withOpacity(0.5)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: AppTheme.textLight, size: 24),
+          const SizedBox(width: AppTheme.spacingM),
+          Text(message, style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUpcomingCard(Meeting meeting) {
+    final isUrgent = meeting.startTime.difference(DateTime.now()).inHours < 24;
+    final cardColor = isUrgent ? AppTheme.errorColor : AppTheme.infoColor;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: AppTheme.spacingS),
+      padding: const EdgeInsets.all(AppTheme.spacingM),
+      decoration: AppTheme.cardDecoration.copyWith(
+        color: cardColor.withOpacity(0.08),
+        border: Border.all(color: cardColor.withOpacity(0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: AppTheme.primaryColor,
+                child: Icon(_getMeetingIcon(meeting.meetingType), color: AppTheme.textOnPrimary),
+              ),
+              const SizedBox(width: AppTheme.spacingM),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(meeting.title, style: AppTheme.headingSmall),
+                    Text(meeting.meetingType.toUpperCase(), style: AppTheme.caption),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingM),
+          _buildInfoRow(Icons.location_on_outlined, meeting.location),
+          const SizedBox(height: AppTheme.spacingS),
+          _buildInfoRow(Icons.calendar_today_outlined,
+              "${DateFormat('E, MMM dd, yyyy').format(meeting.startTime)} at ${DateFormat('hh:mm a').format(meeting.startTime)}"),
+          if (meeting.description.isNotEmpty) ...[
+            const SizedBox(height: AppTheme.spacingM),
+            Text(meeting.description, style: AppTheme.bodySmall),
+          ],
+          const SizedBox(height: AppTheme.spacingM),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => _editMeeting(meeting),
+                  style: AppTheme.secondaryButtonStyle,
+                  icon: const Icon(Icons.edit_outlined, size: 16),
+                  label: const Text("Edit"),
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingS),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => _cancelMeeting(meeting),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.errorColor.withOpacity(0.1),
+                    foregroundColor: AppTheme.errorColor,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingL, vertical: AppTheme.spacingM),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusM),
+                    ),
+                  ),
+                  icon: const Icon(Icons.cancel_outlined, size: 16),
+                  label: const Text("Cancel"),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPastCard(Meeting meeting) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: AppTheme.spacingXS),
+      decoration: AppTheme.cardDecoration.copyWith(
+        color: AppTheme.surfaceColor.withOpacity(0.7),
+        boxShadow: [],
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: AppTheme.backgroundColor,
+          child: Icon(_getMeetingIcon(meeting.meetingType), color: AppTheme.textSecondary),
+        ),
+        title: Text(meeting.title, style: AppTheme.bodyLarge),
+        subtitle: Text(meeting.location, style: AppTheme.bodySmall),
+        trailing: Text(
+          DateFormat('dd MMM\nyyyy').format(meeting.startTime),
+          textAlign: TextAlign.right,
+          style: AppTheme.caption,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: AppTheme.textSecondary),
+        const SizedBox(width: AppTheme.spacingS),
+        Expanded(child: Text(text, style: AppTheme.bodyMedium)),
+      ],
+    );
+  }
+
+  IconData _getMeetingIcon(String meetingType) {
+    switch (meetingType.toLowerCase()) {
+      case 'consultation':
+        return Icons.medical_services_outlined;
+      case 'follow-up':
+        return Icons.follow_the_signs_outlined;
+      case 'emergency':
+        return Icons.emergency_outlined;
+      default:
+        return Icons.event_outlined;
+    }
   }
 }

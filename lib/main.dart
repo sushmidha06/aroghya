@@ -1,39 +1,94 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:aroghya_ai/models/user.dart';
+import 'package:aroghya_ai/models/symptom_report.dart';
+import 'package:aroghya_ai/models/medication.dart';
+import 'package:aroghya_ai/models/meeting.dart';
+import 'package:aroghya_ai/models/medical_document.dart';
 import 'package:aroghya_ai/auth.dart' as auth;
-import 'package:aroghya_ai/services/auth_service.dart';
 import 'package:aroghya_ai/home.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n/app_localizations.dart';
+import 'services/language_service.dart';
+import 'services/multi_language_speech_service.dart';
+import 'services/storage_permission_service.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  // Load environment variables first
+  await dotenv.load(fileName: ".env");
+  
   // Initialize Hive
   await Hive.initFlutter();
   
-  // Register the User adapter
+  // Register all Hive adapters
   Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(SymptomReportAdapter());
+  Hive.registerAdapter(MedicationAdapter());
+  Hive.registerAdapter(MeetingAdapter());
+  Hive.registerAdapter(MedicalDocumentAdapter());
+
+  // Open Hive boxes (check if already open to avoid errors)
+  if (!Hive.isBoxOpen('users')) await Hive.openBox<User>('users');
+  if (!Hive.isBoxOpen('authBox')) await Hive.openBox('authBox');
+  if (!Hive.isBoxOpen('symptom_reports')) await Hive.openBox<SymptomReport>('symptom_reports');
+  if (!Hive.isBoxOpen('medications')) await Hive.openBox<Medication>('medications');
+  if (!Hive.isBoxOpen('meetings')) await Hive.openBox<Meeting>('meetings');
+  if (!Hive.isBoxOpen('medical_documents')) await Hive.openBox<MedicalDocument>('medical_documents');
+  if (!Hive.isBoxOpen('offline_data')) await Hive.openBox('offline_data');
+  if (!Hive.isBoxOpen('sync_queue')) await Hive.openBox('sync_queue');
+  if (!Hive.isBoxOpen('language_settings')) await Hive.openBox('language_settings'); // For LanguageService
+  if (!Hive.isBoxOpen('imageBox')) await Hive.openBox('imageBox'); // For image storage
   
-  // Open the users box
-  await Hive.openBox<User>('users');
+  // Initialize language service
+  final languageService = LanguageService();
+  await languageService.initialize();
   
-  runApp(const MedicalOnboardingApp());
+  // Initialize speech service
+  await MultiLanguageSpeechService.initialize();
+  
+  // Initialize storage permissions
+  await StoragePermissionService.requestAllPermissions();
+  
+  runApp(MedicalOnboardingApp(languageService: languageService));
 }
 
 class MedicalOnboardingApp extends StatelessWidget {
-  const MedicalOnboardingApp({super.key});
+  final LanguageService languageService;
+  
+  const MedicalOnboardingApp({super.key, required this.languageService});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Medical Onboarding',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Inter',
-      ),
-      debugShowCheckedModeBanner: false,
-      home: const MedicalOnboardingScreen(),
+    final authBox = Hive.box('authBox');
+    final isLoggedIn = authBox.get('isLoggedIn', defaultValue: false);
+
+    return ListenableBuilder(
+      listenable: languageService,
+      builder: (context, child) {
+        return MaterialApp(
+          title: 'Aroghya AI',
+          theme: AppTheme.lightTheme.copyWith(
+            textTheme: AppTheme.lightTheme.textTheme.apply(
+              fontFamily: 'Inter',
+            ),
+          ),
+          debugShowCheckedModeBanner: false,
+          locale: languageService.currentLocale,
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: LanguageService.supportedLocales,
+          home: isLoggedIn ? HomePage(languageService: languageService) : const MedicalOnboardingScreen(),
+        );
+      },
     );
   }
 }
@@ -204,7 +259,7 @@ class OnboardingPageContent extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 30,
                         offset: const Offset(0, 10),
                       ),
@@ -314,8 +369,9 @@ class _GetStartedButtonState extends State<GetStartedButton>
       onTapUp: (_) => _buttonController.reverse(),
       onTapCancel: () => _buttonController.reverse(),
       onTap: () async {
-        // Check if user is already logged in
-        final isLoggedIn = await AuthService.isUserLoggedIn();
+        // Check if user is already logged in using authBox
+        final authBox = Hive.box('authBox');
+        final isLoggedIn = authBox.get('isLoggedIn', defaultValue: false);
         if (isLoggedIn) {
           // Navigate directly to home page
           Navigator.pushReplacement(
@@ -343,7 +399,7 @@ class _GetStartedButtonState extends State<GetStartedButton>
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF1E3A8A).withOpacity(0.3),
+                    color: const Color(0xFF1E3A8A).withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),

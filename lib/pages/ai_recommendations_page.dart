@@ -1,206 +1,249 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import '../services/gemma_ai_service.dart';
+import '../models/symptom_report.dart';
+import '../theme/app_theme.dart';
 
-class AIRecommendationsPage extends StatelessWidget {
+class AIRecommendationsPage extends StatefulWidget {
   const AIRecommendationsPage({super.key});
 
-  // Dummy recommendation data
-  final List<Map<String, dynamic>> recommendations = const [
-    {
-      'title': 'Diet Recommendations',
-      'items': [
-        'Eat 5 servings of fruits & vegetables daily',
-        'Drink at least 2 liters of water',
-        'Reduce sugar, fried, and processed foods',
-      ],
-      'icon': Icons.restaurant_menu,
-      'color': Colors.orangeAccent,
-    },
-    {
-      'title': 'Exercise Tips',
-      'items': [
-        'Walk 30 minutes daily',
-        'Strength training 2-3 times/week',
-        'Practice yoga or stretching',
-      ],
-      'icon': Icons.fitness_center,
-      'color': Colors.teal,
-    },
-    {
-      'title': 'Preventive Care',
-      'items': [
-        'Stay updated on vaccinations',
-        'Schedule routine health check-ups',
-        'Regular dental & eye exams',
-      ],
-      'icon': Icons.medical_services,
-      'color': Colors.lightBlue,
-    },
-    {
-      'title': 'Mental Health',
-      'items': [
-        'Meditation or breathing exercises',
-        'Sleep 7-8 hours/night',
-        'Reduce screen time & stress',
-      ],
-      'icon': Icons.self_improvement,
-      'color': Colors.purpleAccent,
-    },
-    {
-      'title': 'Priority Alerts',
-      'items': [
-        'High blood pressure or sugar levels',
-        'Symptoms requiring urgent attention',
-        'Reminders for medications',
-      ],
-      'icon': Icons.warning,
-      'color': Colors.redAccent,
-    },
-  ];
+  @override
+  State<AIRecommendationsPage> createState() => _AIRecommendationsPageState();
+}
+
+class _AIRecommendationsPageState extends State<AIRecommendationsPage> {
+  Map<String, dynamic>? _recommendationsData;
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecommendations();
+  }
+
+  Future<void> _loadRecommendations() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      // Load symptom reports from Hive to generate recommendations
+      final box = await Hive.openBox<SymptomReport>('symptom_reports');
+      final reports = box.values.toList();
+      
+      Map<String, dynamic> data;
+      
+      if (reports.isNotEmpty) {
+        // Use the existing method that generates recommendations from symptom reports
+        data = await GemmaAIService.generateTensorFlowRecommendations();
+      } else {
+        // Provide default recommendations if no symptom data exists
+        data = {
+          'recommendations': [
+            {
+              'title': 'Welcome to AI Health Recommendations',
+              'description': 'Complete a symptom check to get personalized health recommendations',
+              'category': 'Getting Started',
+              'priority': 'Medium',
+              'icon': 'info',
+              'color': 'blue',
+              'items': [
+                'Use the Symptom Checker to analyze your health',
+                'Get AI-powered medical insights',
+                'Receive personalized recommendations',
+                'Track your health over time'
+              ],
+            }
+          ],
+          'healthScore': 85,
+          'lastUpdated': DateTime.now().toIso8601String(),
+        };
+      }
+      
+      setState(() {
+        _recommendationsData = data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = const Color(0xFF1E2432);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('AI Health Recommendations', style: TextStyle(color: Colors.white)),
-        backgroundColor: primaryColor,
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text('AI Health Recommendations', 
+            style: AppTheme.headingSmall.copyWith(color: AppTheme.textOnPrimary)),
+        backgroundColor: AppTheme.primaryColor,
+        iconTheme: const IconThemeData(color: AppTheme.textOnPrimary),
+        elevation: AppTheme.elevationS,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(screenWidth * 0.04),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- Health Score Card ---
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              decoration: BoxDecoration(
-                color: Colors.lightBlue[50],
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'AI Health Score',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.01),
-                        Text(
-                          'Overall Risk Level: Low',
-                          style: TextStyle(fontSize: screenWidth * 0.035),
-                        ),
-                        SizedBox(height: screenHeight * 0.005),
-                        Text(
-                          'Summary: Focus on diet and exercise this week',
-                          style: TextStyle(fontSize: screenWidth * 0.03, color: Colors.grey),
-                        ),
-                      ],
-                    ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator(color: AppTheme.primaryColor))
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, size: 64, color: AppTheme.errorColor),
+                      const SizedBox(height: AppTheme.spacingM),
+                      Text('Error loading recommendations', style: AppTheme.headingSmall),
+                      const SizedBox(height: AppTheme.spacingS),
+                      Text(_error!, textAlign: TextAlign.center, style: AppTheme.bodyMedium),
+                      const SizedBox(height: AppTheme.spacingM),
+                      ElevatedButton(
+                        onPressed: _loadRecommendations,
+                        child: Text('Retry'),
+                      ),
+                    ],
                   ),
-                  CircleAvatar(
-                    radius: screenWidth * 0.06,
-                    backgroundColor: primaryColor,
-                    child: Text(
-                      '85%',
-                      style: TextStyle(
-                          color: Colors.white, 
-                          fontWeight: FontWeight.bold,
-                          fontSize: screenWidth * 0.035),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-
-            // --- Recommendations ---
-            ...recommendations.map((rec) {
-              return Container(
-                margin: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-                padding: EdgeInsets.all(screenWidth * 0.04),
-                decoration: BoxDecoration(
-                  color: rec['color'].withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          rec['icon'],
-                          color: rec['color'],
-                          size: screenWidth * 0.07,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(screenWidth * 0.04),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // --- Health Score Card ---
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(screenWidth * 0.04),
+                        decoration: BoxDecoration(
+                          color: Colors.lightBlue[50],
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        SizedBox(width: screenWidth * 0.03),
-                        Expanded(
-                          child: Text(
-                            rec['title'],
-                            style: TextStyle(
-                                fontSize: screenWidth * 0.04, 
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.01),
-                    ...rec['items'].map<Widget>((item) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.002),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(Icons.arrow_right, size: screenWidth * 0.05),
-                            SizedBox(width: screenWidth * 0.015),
                             Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'AI Health Score',
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.04,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.01),
+                                  Text(
+                                    'Overall Risk Level: ${_recommendationsData?['riskLevel'] ?? 'Unknown'}',
+                                    style: TextStyle(fontSize: screenWidth * 0.035),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.005),
+                                  Text(
+                                    _recommendationsData?['summary'] ?? 'No summary available',
+                                    style: TextStyle(fontSize: screenWidth * 0.03, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            CircleAvatar(
+                              radius: screenWidth * 0.06,
+                              backgroundColor: AppTheme.primaryColor,
                               child: Text(
-                                item,
-                                style: TextStyle(fontSize: screenWidth * 0.035),
+                                '${_recommendationsData?['healthScore'] ?? 0}%',
+                                style: TextStyle(
+                                    color: Colors.white, 
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: screenWidth * 0.035),
                               ),
                             ),
                           ],
                         ),
-                      );
-                    }).toList(),
-                    SizedBox(height: screenHeight * 0.01),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Follow-up scheduled for ${rec['title']}'),
+                      ),
+                      SizedBox(height: screenHeight * 0.02),
+
+                      // --- Recommendations ---
+                      if (_recommendationsData?['recommendations'] != null && 
+                          _recommendationsData!['recommendations'] is List)
+                        ...(_recommendationsData!['recommendations'] as List).map((rec) {
+                final colorName = (rec['color'] is String && rec['color'] != null) ? rec['color'] as String : 'blue';
+                final iconName = (rec['icon'] is String && rec['icon'] != null) ? rec['icon'] as String : '';
+                final title = (rec['title'] is String && rec['title'] != null) ? rec['title'] as String : 'Recommendation';
+                return Container(
+                  margin: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+                  padding: EdgeInsets.all(screenWidth * 0.04),
+                  decoration: BoxDecoration(
+                    color: _getColorFromString(colorName).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            _getIconFromString(iconName),
+                            color: _getColorFromString(colorName),
+                            size: screenWidth * 0.07,
+                          ),
+                          SizedBox(width: screenWidth * 0.03),
+                          Expanded(
+                            child: Text(
+                              title,
+                              style: TextStyle(
+                                  fontSize: screenWidth * 0.04, 
+                                  fontWeight: FontWeight.bold),
                             ),
-                          );
-                        },
-                        icon: Icon(Icons.calendar_today, size: screenWidth * 0.04),
-                        label: Text('Schedule Follow-up', style: TextStyle(fontSize: screenWidth * 0.035)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: rec['color'],
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: screenHeight * 0.01),
+                      ...(rec['items'] as List? ?? []).map<Widget>((item) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: screenHeight * 0.002),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.arrow_right, size: screenWidth * 0.05),
+                              SizedBox(width: screenWidth * 0.015),
+                              Expanded(
+                                child: Text(
+                                  item,
+                                  style: TextStyle(fontSize: screenWidth * 0.035),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      SizedBox(height: screenHeight * 0.01),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Follow-up scheduled for $title'),
+                              ),
+                            );
+                          },
+                          icon: Icon(Icons.calendar_today, size: screenWidth * 0.04),
+                          label: Text('Schedule Follow-up', style: TextStyle(fontSize: screenWidth * 0.035)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _getColorFromString(colorName),
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
+                    ],
+                  ),
+                );
             }).toList(),
 
             SizedBox(height: screenHeight * 0.02),
@@ -210,7 +253,7 @@ class AIRecommendationsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: screenWidth * 0.045, 
                 fontWeight: FontWeight.bold, 
-                color: primaryColor
+                color: AppTheme.primaryColor
               ),
             ),
             SizedBox(height: screenHeight * 0.01),
@@ -232,7 +275,7 @@ class AIRecommendationsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: screenWidth * 0.045, 
                 fontWeight: FontWeight.bold, 
-                color: primaryColor
+                color: AppTheme.primaryColor
               ),
             ),
             SizedBox(height: screenHeight * 0.01),
@@ -258,6 +301,44 @@ class AIRecommendationsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getColorFromString(String colorName) {
+    switch (colorName) {
+      case 'orangeAccent':
+        return Colors.orangeAccent;
+      case 'teal':
+        return Colors.teal;
+      case 'lightBlue':
+        return Colors.lightBlue;
+      case 'purpleAccent':
+        return Colors.purpleAccent;
+      case 'redAccent':
+        return Colors.redAccent;
+      case 'green':
+        return Colors.green;
+      default:
+        return Colors.blue;
+    }
+  }
+
+  IconData _getIconFromString(String iconName) {
+    switch (iconName) {
+      case 'restaurant_menu':
+        return Icons.restaurant_menu;
+      case 'fitness_center':
+        return Icons.fitness_center;
+      case 'medical_services':
+        return Icons.medical_services;
+      case 'self_improvement':
+        return Icons.self_improvement;
+      case 'warning':
+        return Icons.warning;
+      case 'health_and_safety':
+        return Icons.health_and_safety;
+      default:
+        return Icons.info;
+    }
   }
 }
 

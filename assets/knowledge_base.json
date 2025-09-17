@@ -1,0 +1,204 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-01-15T00:00:00Z",
+  "conditions": {
+    "malaria": {
+      "name": "Malaria",
+      "symptoms": ["fever", "chills", "headache", "fatigue", "nausea", "vomiting"],
+      "severity": "severe",
+      "confidence_factors": {
+        "fever": 0.9,
+        "chills": 0.8,
+        "headache": 0.6,
+        "fatigue": 0.7,
+        "nausea": 0.5,
+        "vomiting": 0.5
+      },
+      "treatment_protocol": [
+        "Immediate medical attention required",
+        "Antimalarial medication as per local guidelines",
+        "Supportive care for fever and dehydration",
+        "Monitor for complications"
+      ],
+      "specialist_referral": "Internal Medicine/Infectious Disease",
+      "risk_factors": "Endemic area, mosquito exposure, rainy season",
+      "when_to_seek_help": "Immediate medical attention for fever with chills in endemic areas"
+    },
+    "dengue": {
+      "name": "Dengue Fever",
+      "symptoms": ["fever", "headache", "body_aches", "fatigue", "nausea", "rash"],
+      "severity": "severe",
+      "confidence_factors": {
+        "fever": 0.9,
+        "headache": 0.8,
+        "body_aches": 0.9,
+        "fatigue": 0.7,
+        "nausea": 0.6,
+        "rash": 0.7
+      },
+      "treatment_protocol": [
+        "Immediate medical evaluation",
+        "Supportive care - hydration and fever management",
+        "Monitor platelet count and bleeding signs",
+        "Avoid aspirin and NSAIDs"
+      ],
+      "specialist_referral": "Internal Medicine/Infectious Disease",
+      "risk_factors": "Aedes mosquito breeding areas, urban/semi-urban areas",
+      "when_to_seek_help": "Immediate attention for high fever with severe body aches"
+    },
+    "typhoid": {
+      "name": "Typhoid Fever",
+      "symptoms": ["fever", "headache", "fatigue", "abdominal_pain", "diarrhea", "loss_of_appetite"],
+      "severity": "severe",
+      "confidence_factors": {
+        "fever": 0.9,
+        "headache": 0.7,
+        "fatigue": 0.8,
+        "abdominal_pain": 0.8,
+        "diarrhea": 0.7,
+        "loss_of_appetite": 0.6
+      },
+      "treatment_protocol": [
+        "Antibiotic therapy as per sensitivity",
+        "Supportive care and hydration",
+        "Isolation precautions",
+        "Monitor for complications"
+      ],
+      "specialist_referral": "Internal Medicine/Gastroenterology",
+      "risk_factors": "Poor sanitation, contaminated water/food",
+      "when_to_seek_help": "Persistent fever with abdominal symptoms"
+    },
+    "gastroenteritis": {
+      "name": "Acute Gastroenteritis",
+      "symptoms": ["diarrhea", "vomiting", "abdominal_pain", "fever", "dehydration"],
+      "severity": "moderate",
+      "confidence_factors": {
+        "diarrhea": 0.9,
+        "vomiting": 0.8,
+        "abdominal_pain": 0.7,
+        "fever": 0.6,
+        "dehydration": 0.8
+      },
+      "treatment_protocol": [
+        "Oral rehydration therapy (ORS)",
+        "BRAT diet when tolerated",
+        "Probiotics if available",
+        "Avoid dairy temporarily"
+      ],
+      "specialist_referral": "General Medicine/Pediatrics",
+      "risk_factors": "Contaminated food/water, poor hygiene",
+      "when_to_seek_help": "Signs of severe dehydration or blood in stool"
+    },
+    "respiratory_infection": {
+      "name": "Upper Respiratory Tract Infection",
+      "symptoms": ["cough", "sore_throat", "runny_nose", "fever", "headache", "fatigue"],
+      "severity": "mild",
+      "confidence_factors": {
+        "cough": 0.9,
+        "sore_throat": 0.8,
+        "runny_nose": 0.8,
+        "fever": 0.6,
+        "headache": 0.5,
+        "fatigue": 0.6
+      },
+      "treatment_protocol": [
+        "Symptomatic treatment",
+        "Adequate rest and hydration",
+        "Warm salt water gargles",
+        "Paracetamol for fever/pain"
+      ],
+      "specialist_referral": "General Medicine/ENT",
+      "risk_factors": "Seasonal changes, crowded conditions",
+      "when_to_seek_help": "Difficulty breathing or persistent high fever"
+    },
+    "hypertension": {
+      "name": "Hypertension",
+      "symptoms": ["headache", "dizziness", "chest_pain", "shortness_of_breath", "fatigue"],
+      "severity": "moderate",
+      "confidence_factors": {
+        "headache": 0.6,
+        "dizziness": 0.7,
+        "chest_pain": 0.8,
+        "shortness_of_breath": 0.8,
+        "fatigue": 0.5
+      },
+      "treatment_protocol": [
+        "Lifestyle modifications",
+        "Antihypertensive medication",
+        "Regular BP monitoring",
+        "Dietary salt restriction"
+      ],
+      "specialist_referral": "Cardiology/Internal Medicine",
+      "risk_factors": "Family history, obesity, high salt diet, stress",
+      "when_to_seek_help": "BP >180/110 or severe symptoms"
+    },
+    "diabetes_complications": {
+      "name": "Diabetes-related Complications",
+      "symptoms": ["excessive_thirst", "frequent_urination", "fatigue", "blurred_vision", "slow_healing"],
+      "severity": "moderate",
+      "confidence_factors": {
+        "excessive_thirst": 0.8,
+        "frequent_urination": 0.9,
+        "fatigue": 0.6,
+        "blurred_vision": 0.7,
+        "slow_healing": 0.8
+      },
+      "treatment_protocol": [
+        "Blood glucose monitoring",
+        "Medication adjustment",
+        "Dietary management",
+        "Regular follow-up"
+      ],
+      "specialist_referral": "Endocrinology/Internal Medicine",
+      "risk_factors": "Poor glucose control, family history, obesity",
+      "when_to_seek_help": "Very high/low blood sugar or ketoacidosis signs"
+    }
+  },
+  "drug_interactions": {
+    "paracetamol": {
+      "interactions": ["warfarin", "alcohol"],
+      "warnings": ["Liver disease", "Alcohol use"],
+      "max_daily_dose": "4000mg"
+    },
+    "aspirin": {
+      "interactions": ["warfarin", "methotrexate", "ACE_inhibitors"],
+      "warnings": ["Bleeding disorders", "Peptic ulcer", "Asthma"],
+      "contraindications": ["Children under 16", "Dengue fever"]
+    },
+    "metformin": {
+      "interactions": ["contrast_agents", "alcohol"],
+      "warnings": ["Kidney disease", "Liver disease", "Heart failure"],
+      "monitoring": ["Kidney function", "Vitamin B12 levels"]
+    }
+  },
+  "rural_health_protocols": {
+    "emergency_criteria": [
+      "High fever (>39°C) with altered consciousness",
+      "Severe dehydration with inability to retain fluids",
+      "Difficulty breathing or chest pain",
+      "Severe abdominal pain with vomiting",
+      "Signs of severe bleeding",
+      "Seizures or loss of consciousness"
+    ],
+    "referral_guidelines": {
+      "primary_health_center": [
+        "Routine follow-ups",
+        "Medication refills",
+        "Basic diagnostic tests",
+        "Preventive care"
+      ],
+      "district_hospital": [
+        "Specialist consultation required",
+        "Advanced diagnostic tests needed",
+        "Surgical intervention",
+        "Complicated medical conditions"
+      ],
+      "tertiary_care": [
+        "Critical care requirements",
+        "Specialized procedures",
+        "Multi-organ involvement",
+        "Rare conditions"
+      ]
+    }
+  }
+}

@@ -26,4 +26,24 @@ class User extends HiveObject {
     required this.dateOfBirth,
     required this.disease,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'email': email,
+      // Exclude password for security reasons in backup
+      'dateOfBirth': dateOfBirth.toIso8601String(),
+      'disease': disease,
+    };
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      password: '', // Don't restore password from backup
+      dateOfBirth: DateTime.parse(json['dateOfBirth'] ?? DateTime.now().toIso8601String()),
+      disease: json['disease'] ?? '',
+    );
+  }
 }
